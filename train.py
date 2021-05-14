@@ -42,7 +42,7 @@ def tweet_candidate_hashtags(train_df):
         positive_hashtags = train_df["hashtag"][i].split(";")
 
         train_hashtags[i] = {}
-        train_hashtags[i]["positive"] = positive_hashtags
+        train_hashtags[i]["positive"] = list(set(positive_hashtags).intersection(temp_hashtags))
         train_hashtags[i]["negative"] = list(temp_hashtags - set(positive_hashtags))
     pickle.dump(train_hashtags, open(data_path + "tweet_candidate_hashtags.pkl", "wb"))
 
@@ -74,7 +74,8 @@ def news_candidate_hashtags(train_df):
         positive_hashtags = train_df["hashtag"][i].split(";")
 
         train_hashtags[news_ind_to_original_ind[i]] = {}
-        train_hashtags[news_ind_to_original_ind[i]]["positive"] = positive_hashtags
+        train_hashtags[news_ind_to_original_ind[i]]["positive"] = list(
+            set(positive_hashtags).intersection(temp_hashtags))
         train_hashtags[news_ind_to_original_ind[i]]["negative"] = list(temp_hashtags - set(positive_hashtags))
 
     for i in range(len(train_df)):
@@ -112,7 +113,8 @@ def candidate_hashtags_domain(train_df):
             train_hashtags[i]["positive"] = []
             train_hashtags[i]["negative"] = []
         else:
-            train_hashtags[i]["positive"] = train_df["hashtag"][i].split(";")
+            train_hashtags[i]["positive"] = list(
+                set(train_df["hashtag"][i].split(";")).intersection(set(domain_dic[row["domain"]])))
             train_hashtags[i]["negative"] = list(set(domain_dic[row["domain"]]) - set(train_hashtags[i]["positive"]))
     pickle.dump(train_hashtags, open(data_path + "domain_candidate_hashtags.pkl", "wb"))
 
@@ -198,7 +200,7 @@ def get_random_walk_candidate_hashtags(train_df):
         positive_hashtags = row["hashtag"].split(";")
 
         train_hashtags[i] = {}
-        train_hashtags[i]["positive"] = positive_hashtags
+        train_hashtags[i]["positive"] = list(set(positive_hashtags).intersection(set(top_hashtags)))
         train_hashtags[i]["negative"] = list(set(top_hashtags) - set(positive_hashtags))
 
     pickle.dump(train_hashtags, open(data_path + "random_walk_train_hashtags.pkl", "wb"))
@@ -214,9 +216,9 @@ if __name__ == "__main__":
     # create_domain_dic(train_df)
     # train_vectorizer(train_df)
 
-    # tweet_candidate_hashtags(train_df)
-    # news_candidate_hashtags(train_df)
-    # candidate_hashtags_domain(train_df)
+    tweet_candidate_hashtags(train_df)
+    news_candidate_hashtags(train_df)
+    candidate_hashtags_domain(train_df)
 
     # create_entity_hashtag_graph(train_df)
     get_random_walk_candidate_hashtags(train_df)
