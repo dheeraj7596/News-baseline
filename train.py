@@ -201,7 +201,7 @@ def get_random_walk_candidate_hashtags(train_df):
         train_hashtags[i]["positive"] = positive_hashtags
         train_hashtags[i]["negative"] = list(set(top_hashtags) - set(positive_hashtags))
 
-    pickle.dump(train_hashtags, open(data_path + "train_hashtags.pkl", "wb"))
+    pickle.dump(train_hashtags, open(data_path + "random_walk_train_hashtags.pkl", "wb"))
 
 
 if __name__ == "__main__":
