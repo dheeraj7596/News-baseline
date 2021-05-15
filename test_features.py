@@ -177,7 +177,10 @@ def get_random_walk_candidate_hashtags(train_df):
             entities += list(set(row["tweet_entity"]))
         personalized = np.zeros((count,))
         for e in entities:
-            personalized[ent_id[e]] = 1
+            try:
+                personalized[ent_id[e]] = 1
+            except:
+                continue
         pr = pagerank(G, p=0.85, personalize=personalized)
         temp_list = list(pr)[start:]
         args = np.argsort(temp_list)[::-1][:20]
