@@ -22,7 +22,7 @@ if __name__ == "__main__":
         feature_vecs = {}
         # feature-vec = [tweet, news, domain, random]
 
-        hashtags = set(train_df["hashtag"].split(";"))
+        hashtags = set(train_df["hashtag"][i].split(";"))
         for h in hashtags:
             temp = []
             if h in tweet_candidate_hashtags[i]["positive"]:
