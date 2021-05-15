@@ -18,6 +18,7 @@ if __name__ == "__main__":
     train_y = []
 
     for i in range(len(train_df)):
+        print(i)
         feature_vecs = {}
         # feature-vec = [tweet, news, domain, random]
 
