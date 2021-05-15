@@ -182,6 +182,7 @@ def get_random_walk_candidate_hashtags(train_df):
     count = len(ent_id) + len(id_hash)
     train_hashtags = {}
     for ind, row in train_df.iterrows():
+        print(ind)
         entities = []
         if isinstance(row["news_entity"], list):
             entities += list(set(row["news_entity"]))
