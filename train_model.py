@@ -1,23 +1,11 @@
 import pickle
-
-
-def populate_candidate_hashtags(tweet_candidate_hashtags):
-    if i not in tweet_candidate_hashtags:
-        tweet_candidate_hashtags[i] = {}
-        tweet_candidate_hashtags[i]["positive"] = []
-        tweet_candidate_hashtags[i]["negative"] = []
-    else:
-        if "positive" not in tweet_candidate_hashtags[i]:
-            tweet_candidate_hashtags[i]["positive"] = []
-
-        if "negative" not in tweet_candidate_hashtags[i]:
-            tweet_candidate_hashtags[i]["negative"] = []
-    return tweet_candidate_hashtags
-
+import itertools
+import numpy as np
 
 if __name__ == "__main__":
     # data_path = "./data/"
     data_path = "/data/dheeraj/News-baseline/"
+
     train_df = pickle.load(open(data_path + "train_df.pkl", "rb"))
     test_df = pickle.load(open(data_path + "test_df.pkl", "rb"))
 
@@ -26,17 +14,74 @@ if __name__ == "__main__":
     domain_candidate_hashtags = pickle.load(open(data_path + "domain_candidate_hashtags.pkl", "rb"))
     random_walk_train_hashtags = pickle.load(open(data_path + "random_walk_train_hashtags.pkl", "rb"))
 
-    train_hashtags = {}
+    train_X = []
+    train_y = []
+
     for i in range(len(train_df)):
-        tweet_candidate_hashtags = populate_candidate_hashtags(tweet_candidate_hashtags)
-        news_candidate_hashtags = populate_candidate_hashtags(news_candidate_hashtags)
-        domain_candidate_hashtags = populate_candidate_hashtags(domain_candidate_hashtags)
-        random_walk_train_hashtags = populate_candidate_hashtags(random_walk_train_hashtags)
+        feature_vecs = {}
+        # feature-vec = [tweet, news, domain, random]
 
-        train_hashtags[i] = {}
-        train_hashtags[i]["positive"] = list(set(tweet_candidate_hashtags[i]["positive"] + news_candidate_hashtags[i][
-            "positive"] + domain_candidate_hashtags[i]["positive"] + random_walk_train_hashtags[i]["positive"]))
-        train_hashtags[i]["negative"] = list(set(tweet_candidate_hashtags[i]["negative"] + news_candidate_hashtags[i][
-            "negative"] + domain_candidate_hashtags[i]["negative"] + random_walk_train_hashtags[i]["negative"]))
+        hashtags = set(train_df["hashtag"].split(";"))
+        for h in hashtags:
+            temp = []
+            if h in tweet_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
 
-    pickle.dump(train_hashtags, open(data_path + "train_hashtags.pkl", "wb"))
+            if h in news_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            if h in domain_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            if h in random_walk_train_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            feature_vecs[h] = np.array(temp)
+
+        neg_entities = list(set(tweet_candidate_hashtags[i]["negative"] + news_candidate_hashtags[i]["negative"] +
+                                random_walk_train_hashtags[i]["negative"]))
+        for h in neg_entities:
+            temp = []
+            if h in tweet_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            if h in news_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            if h in domain_candidate_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            if h in random_walk_train_hashtags[i]["positive"]:
+                temp.append(1)
+            else:
+                temp.append(0)
+
+            feature_vecs[h] = np.array(temp)
+
+        positive_samples = itertools.product(list(hashtags), neg_entities)
+        neg_samples = itertools.product(neg_entities, list(hashtags))
+
+        for p in positive_samples:
+            train_X.append(feature_vecs[p[0]] - feature_vecs[p[1]])
+            train_y.append(1)
+
+        for p in neg_samples:
+            train_X.append(feature_vecs[p[0]] - feature_vecs[p[1]])
+            train_y.append(0)
+
+    pickle.dump(train_X, open(data_path + "train_X.pkl", "wb"))
+    pickle.dump(train_y, open(data_path + "train_y.pkl", "wb"))
