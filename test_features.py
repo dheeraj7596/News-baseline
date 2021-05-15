@@ -39,12 +39,8 @@ def tweet_candidate_hashtags(train_df):
         for j in inds:
             temp += train_df["hashtag"][j].split(";")
         temp_hashtags = set(dict(sorted(dict(Counter(temp)).items(), key=lambda item: -item[1])[:20]).keys())
-        positive_hashtags = train_df["hashtag"][i].split(";")
-
-        train_hashtags[i] = {}
-        train_hashtags[i]["positive"] = list(set(positive_hashtags).intersection(temp_hashtags))
-        train_hashtags[i]["negative"] = list(temp_hashtags - set(positive_hashtags))
-    pickle.dump(train_hashtags, open(data_path + "tweet_candidate_hashtags.pkl", "wb"))
+        train_hashtags[i] = list(temp_hashtags)
+    pickle.dump(train_hashtags, open(data_path + "test_tweet_candidate_hashtags.pkl", "wb"))
 
 
 def news_candidate_hashtags(train_df):
@@ -71,22 +67,16 @@ def news_candidate_hashtags(train_df):
         for j in inds:
             temp += train_df["hashtag"][news_ind_to_original_ind[j]].split(";")
         temp_hashtags = set(dict(sorted(dict(Counter(temp)).items(), key=lambda item: -item[1])[:20]).keys())
-        positive_hashtags = train_df["hashtag"][i].split(";")
 
-        train_hashtags[news_ind_to_original_ind[i]] = {}
-        train_hashtags[news_ind_to_original_ind[i]]["positive"] = list(
-            set(positive_hashtags).intersection(temp_hashtags))
-        train_hashtags[news_ind_to_original_ind[i]]["negative"] = list(temp_hashtags - set(positive_hashtags))
+        train_hashtags[news_ind_to_original_ind[i]] = list(temp_hashtags)
 
     for i in range(len(train_df)):
         if i in train_hashtags:
             continue
         else:
-            train_hashtags[i] = {}
-            train_hashtags[i]["positive"] = []
-            train_hashtags[i]["negative"] = []
+            train_hashtags[i] = []
 
-    pickle.dump(train_hashtags, open(data_path + "news_candidate_hashtags.pkl", "wb"))
+    pickle.dump(train_hashtags, open(data_path + "test_news_candidate_hashtags.pkl", "wb"))
 
 
 def create_domain_dic(train_df):
@@ -110,13 +100,10 @@ def candidate_hashtags_domain(train_df):
     for i, row in train_df.iterrows():
         train_hashtags[i] = {}
         if not isinstance(row["domain"], str):
-            train_hashtags[i]["positive"] = []
-            train_hashtags[i]["negative"] = []
+            train_hashtags[i] = []
         else:
-            train_hashtags[i]["positive"] = list(
-                set(train_df["hashtag"][i].split(";")).intersection(set(domain_dic[row["domain"]])))
-            train_hashtags[i]["negative"] = list(set(domain_dic[row["domain"]]) - set(train_hashtags[i]["positive"]))
-    pickle.dump(train_hashtags, open(data_path + "domain_candidate_hashtags.pkl", "wb"))
+            train_hashtags[i] = list(domain_dic[row["domain"]])
+    pickle.dump(train_hashtags, open(data_path + "test_domain_candidate_hashtags.pkl", "wb"))
 
 
 def create_entity_hashtag_graph(train_df):
@@ -198,13 +185,9 @@ def get_random_walk_candidate_hashtags(train_df):
         for i in args:
             top_hashtags.append(id_hash[start + i])
 
-        positive_hashtags = row["hashtag"].split(";")
+        train_hashtags[ind] = top_hashtags
 
-        train_hashtags[ind] = {}
-        train_hashtags[ind]["positive"] = list(set(positive_hashtags).intersection(set(top_hashtags)))
-        train_hashtags[ind]["negative"] = list(set(top_hashtags) - set(positive_hashtags))
-
-    pickle.dump(train_hashtags, open(data_path + "random_walk_train_hashtags.pkl", "wb"))
+    pickle.dump(train_hashtags, open(data_path + "test_random_walk_train_hashtags.pkl", "wb"))
 
 
 if __name__ == "__main__":
@@ -222,5 +205,5 @@ if __name__ == "__main__":
     candidate_hashtags_domain(test_df)
 
     # create_entity_hashtag_graph(train_df)
-    get_random_walk_candidate_hashtags(train_df)
+    get_random_walk_candidate_hashtags(test_df)
     pass
