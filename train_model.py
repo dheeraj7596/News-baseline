@@ -1,6 +1,7 @@
 import pickle
 import itertools
 import numpy as np
+from sklearn.svm import SVC
 
 if __name__ == "__main__":
     # data_path = "./data/"
@@ -86,3 +87,7 @@ if __name__ == "__main__":
 
     pickle.dump(train_X, open(data_path + "train_X.pkl", "wb"))
     pickle.dump(train_y, open(data_path + "train_y.pkl", "wb"))
+
+    clf = SVC()
+    clf.fit(train_X, train_y)
+    pickle.dump(clf, open(data_path + "clf.pkl", "wb"))
