@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # - pass it through classifier
     # - calculate max and pick top-5
 
-    f = open("./out_2018.txt", "w")
+    f = open("./2020/out_2020.txt", "w")
     for i in range(len(test_df)):
         test_X = []
         print(i)
@@ -74,4 +74,10 @@ if __name__ == "__main__":
         f.write(";".join(top_hashtags))
         f.write("\n")
 
+    f.close()
+
+    f = open("./2020/true_2020.txt")
+    for i, row in test_df.iterrows():
+        f.write(row["hashtag"])
+        f.write("\n")
     f.close()
