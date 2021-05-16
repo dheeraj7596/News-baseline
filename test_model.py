@@ -3,8 +3,10 @@ import numpy as np
 import itertools
 
 if __name__ == "__main__":
-    # data_path = "./data/"
-    data_path = "/data/dheeraj/News-baseline/"
+    # base_path = "./data/"
+    base_path = "/data/dheeraj/News-baseline/"
+    dataset = "2020"
+    data_path = base_path + dataset + "/"
 
     test_df = pickle.load(open(data_path + "test_df.pkl", "rb"))
 
