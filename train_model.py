@@ -2,6 +2,7 @@ import pickle
 import itertools
 import numpy as np
 from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
 
 if __name__ == "__main__":
     # base_path = "./data/"
@@ -91,5 +92,6 @@ if __name__ == "__main__":
     pickle.dump(train_y, open(data_path + "train_y.pkl", "wb"))
 
     clf = SVC()
-    clf.fit(train_X, train_y)
-    pickle.dump(clf, open(data_path + "clf.pkl", "wb"))
+    train_x, test_x, train_y, test_y = train_test_split(train_X, train_y, test_size=0.1, stratify=train_y)
+    clf.fit(test_x, test_y)
+    pickle.dump(clf, open(data_path + "clf_0.01.pkl", "wb"))
