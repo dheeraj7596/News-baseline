@@ -102,7 +102,10 @@ def candidate_hashtags_domain(train_df):
         if not isinstance(row["domain"], str):
             train_hashtags[i] = []
         else:
-            train_hashtags[i] = list(domain_dic[row["domain"]])
+            try:
+                train_hashtags[i] = list(domain_dic[row["domain"]])
+            except:
+                train_hashtags[i] = []
     pickle.dump(train_hashtags, open(data_path + "test_domain_candidate_hashtags.pkl", "wb"))
 
 
