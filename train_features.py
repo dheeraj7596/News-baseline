@@ -208,8 +208,8 @@ def get_random_walk_candidate_hashtags(train_df):
 
 
 if __name__ == "__main__":
-    base_path = "./data/"
-    # base_path = "/data/dheeraj/News-baseline/"
+    # base_path = "./data/"
+    base_path = "/data/dheeraj/News-baseline/"
     dataset = "2020"
     data_path = base_path + dataset + "/"
     # df = pickle.load(open(data_path + "tweet_news_with_domain_2020.pkl", "rb"))
