@@ -15,7 +15,7 @@ if __name__ == "__main__":
     domain_candidate_hashtags = pickle.load(open(data_path + "test_domain_candidate_hashtags.pkl", "rb"))
     random_walk_train_hashtags = pickle.load(open(data_path + "test_random_walk_train_hashtags.pkl", "rb"))
 
-    clf = pickle.load(open(data_path + "clf_0.1.pkl", "rb"))
+    clf = pickle.load(open(data_path + "clf_1_hundredth.pkl", "rb"))
 
     # - get features of each candidate
     # - all pairs
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     f.close()
 
-    f = open("./2020/true_2020.txt")
+    f = open("./2020/true_2020.txt", "w")
     for i, row in test_df.iterrows():
         f.write(row["hashtag"])
         f.write("\n")

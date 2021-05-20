@@ -92,6 +92,6 @@ if __name__ == "__main__":
     pickle.dump(train_y, open(data_path + "train_y.pkl", "wb"))
 
     clf = SVC()
-    train_x, test_x, train_y, test_y = train_test_split(train_X, train_y, test_size=0.1, stratify=train_y)
+    train_x, test_x, train_y, test_y = train_test_split(train_X, train_y, test_size=0.01, stratify=train_y)
     clf.fit(test_x, test_y)
-    pickle.dump(clf, open(data_path + "clf_0.1.pkl", "wb"))
+    pickle.dump(clf, open(data_path + "clf_1_hundredth.pkl", "wb"))
